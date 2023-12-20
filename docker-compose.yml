@@ -1,0 +1,31 @@
+version: '3'
+services:
+  oracle-db:
+    image: oracleinanutshell/oracle-xe-11g:latest
+    ports:
+      - 11521:1521
+    environment:
+      - ORACLE_ALLOW_REMOTE=true
+      - ORACLE_PASSWORD=docker
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - oracle-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle-db:1521/bossabox-database
+      - SPRING_DATASOURCE_USERNAME=docker
+      - SPRING_DATASOURCE_PASSWORD=docker
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=oracle.jdbc.OracleDriver
+      - SPRING_JPA_DATABASE-PLATFORM=org.hibernate.dialect.Oracle12cDialect
+      - SPRING_JPA_HIBERNATE_USE-NEW-ID-GENERATOR-MAPPINGS=false
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=create
+
+volumes:
+  oracle-data:
