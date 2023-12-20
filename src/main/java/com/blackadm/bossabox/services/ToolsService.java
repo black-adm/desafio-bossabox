@@ -18,4 +18,7 @@ public class ToolsService {
         return toolsRepository.findAll();
     }
 
+    public List<Tools> findToolsByTag(String tags) {
+        return toolsRepository.findByTags(tags);
+    }
 }
